@@ -1,0 +1,90 @@
+name: Multi arch build packages
+
+on:
+  push:
+    branches:
+      - main
+      - openwrt-24.10
+      - openwrt-23.05
+    paths:
+      - '.github/workflows/multi-arch-build.yml'
+      - '**/Makefile'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: build ${{ matrix.arch }} ${{ github.ref_name }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        arch:
+          - aarch64_cortex-a53
+          - aarch64_cortex-a72
+          - aarch64_generic
+          - arm_arm1176jzf-s_vfp
+          - arm_arm926ej-s
+          - arm_cortex-a15_neon-vfpv4
+          - arm_cortex-a5_vfpv4
+          - arm_cortex-a7
+          - arm_cortex-a7_neon-vfpv4
+          - arm_cortex-a7_vfpv4
+          - arm_cortex-a8_vfpv3
+          - arm_cortex-a9
+          - arm_cortex-a9_neon
+          - arm_cortex-a9_vfpv3-d16
+          - arm_fa526
+          # - arm_mpcore  # Fails to create index?
+          - arm_xscale
+          - i386_pentium-mmx
+          - i386_pentium4
+          - mips64_octeonplus
+          - mips_24kc
+          - mips_4kec
+          - mips_mips32
+          - mipsel_24kc
+          - mipsel_24kc_24kf
+          - mipsel_74kc
+          - mipsel_mips32
+          - powerpc64_e5500
+          - powerpc_464fp
+          - powerpc_8548
+          - riscv64_riscv64
+          - x86_64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build APK packages ${{ matrix.arch }}
+        if: ${{ github.ref_name == 'main' }}
+        # uses: openwrt/gh-action-sdk@main  # Switch back when https://github.com/openwrt/gh-action-sdk/pull/46 is merged
+        uses: morytyann/gh-action-sdk@9f25772dff4788550a51688423f8f308d061025d
+        env:
+          ARCH: "${{ matrix.arch }}-${{ github.ref_name }}"
+          FEEDNAME: "meshtastic"
+          IGNORE_ERRORS: "n m y"
+          PRIVATE_KEY: "${{ secrets.WRT_APK_KEY }}"
+          INDEX: 1
+
+      - name: Build IPK packages ${{ matrix.arch }}
+        if: ${{ github.ref_name != 'main' }}
+        uses: openwrt/gh-action-sdk@main
+        env:
+          ARCH: "${{ matrix.arch }}-${{ github.ref_name }}"
+          FEEDNAME: "meshtastic"
+          IGNORE_ERRORS: "n m y"
+          KEY_BUILD: "${{ secrets.WRT_IPK_KEY }}"
+          INDEX: 1
+
+      - name: Upload packages to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          deploy_key: ${{ secrets.WRT_REPO_DEPLOY_KEY }}
+          external_repository: meshtastic/openwrt-repo
+          publish_dir: bin/packages/${{ matrix.arch }}/meshtastic/
+          destination_dir: ${{ github.ref_name }}/${{ matrix.arch }}
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
