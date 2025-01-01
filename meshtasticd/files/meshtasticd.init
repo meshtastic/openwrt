@@ -6,7 +6,7 @@ USE_PROCD=1
 
 NAME=meshtasticd
 DAEMON=/usr/sbin/meshtasticd
-DATA_DIR=/var/lib/meshtasticd
+DATA_DIR=/srv/meshtasticd
 
 CONFIG_BASEDIR=/etc/config/meshtasticd
 CONFIG_FILE=${CONFIG_BASEDIR}/config.yaml
