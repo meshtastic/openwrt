@@ -17,14 +17,8 @@ jobs:
   build:
     name: build ${{ matrix.arch }} ${{ github.ref_name }}
     runs-on: ubuntu-24.04
-    concurrency:
-      # Only run one build at a time (in case of multiple merges)
-      group: publish-builds
     strategy:
       fail-fast: false
-      # We can only run one build at a time due to the GitHub Pages deployment
-      # This should be revisited in the future, as it makes the build take *days*
-      max-parallel: 1
       matrix:
         arch:
           - aarch64_cortex-a53
@@ -84,13 +78,32 @@ jobs:
           KEY_BUILD: "${{ secrets.WRT_IPK_KEY }}"
           INDEX: 1
 
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.arch }}
+          path: bin/packages/${{ matrix.arch }}/meshtastic/
+
+  deploy:
+    name: Deploy packages to GitHub Pages
+    runs-on: ubuntu-24.04
+    needs: build
+    concurrency:
+      # Only run one deploy at a time
+      group: publish-builds
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ github.ref_name }}
+
       - name: Upload packages to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           deploy_key: ${{ secrets.WRT_REPO_DEPLOY_KEY }}
           external_repository: meshtastic/openwrt-repo
-          publish_dir: bin/packages/${{ matrix.arch }}/meshtastic/
-          destination_dir: ${{ github.ref_name }}/${{ matrix.arch }}
+          publish_dir: ${{ github.ref_name }}
+          destination_dir: ${{ github.ref_name }}
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
           enable_jekyll: true
