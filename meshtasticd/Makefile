@@ -6,13 +6,13 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=meshtasticd
 PKG_VERSION:=2.5.18
-PKG_RELEASE:=1
-PKG_SOURCE_VERSION:=b12ac6d564be4558047231d5ad946a908dfbbd7f
+PKG_RELEASE:=2
+PKG_SOURCE_VERSION:=v2.5.18.89ebafc
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/meshtastic/firmware.git
-PKG_MIRROR_HASH:=4f1428b62564e77cd14c52fef1152a2bdd85d8fa016b12fba769207bcb9c4b46
+PKG_MIRROR_HASH:=86c3da17fdc95ec9bdb792e6562ca8a726632a32e996b24c428977a6f6233280
 PKG_BUILD_DEPENDS:= \
 	python3/host \
 	python-platformio/host \
@@ -122,13 +122,13 @@ define Package/meshtasticd/install
 	$(CP) -R $(PKG_BUILD_DIR)/bin/config.d/* $(1)/etc/meshtasticd/available.d
 
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_DIR) $(1)/var/lib/meshtasticd
+	$(INSTALL_DIR) $(1)/srv/meshtasticd
 	$(INSTALL_BIN) ./files/meshtasticd.init $(1)/etc/init.d/meshtasticd
 endef
 
 define Package/meshtasticd-avahi-service/install
 	$(INSTALL_DIR) $(1)/etc/avahi/services
-	$(INSTALL_DATA) ./files/meshtasticd.service $(1)/etc/avahi/services/
+	$(INSTALL_CONF) ./files/meshtasticd.service $(1)/etc/avahi/services/
 endef
 
 define Package/meshtasticd/conffiles
