@@ -6,7 +6,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=meshtasticd-web
 PKG_VERSION:=2.5.4
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=build.tar
 PKG_SOURCE_URL:=https://github.com/meshtastic/web/releases/download/v$(PKG_VERSION)/
@@ -41,6 +41,7 @@ endef
 define Package/meshtasticd-web/install
 	$(INSTALL_DIR) $(1)/usr/share/meshtasticd/web
 	$(CP) $(PKG_BUILD_DIR)/web/* $(1)/usr/share/meshtasticd/web
+	$(INSTALL_DIR) $(1)/etc/meshtasticd/ssl
 endef
 
 $(eval $(call BuildPackage,meshtasticd-web))
