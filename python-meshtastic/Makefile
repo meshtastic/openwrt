@@ -5,11 +5,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=python-meshtastic
-PKG_VERSION:=2.5.9
+PKG_VERSION:=2.5.11
 PKG_RELEASE:=1
 
 PYPI_NAME:=meshtastic
-PKG_HASH:=e0d90f18446605c232ad40d6903ffa6bce427d5c278443d254740a4bb2c8630c
+PKG_HASH:=89ccf0f1f1fb2c1520a58b8ad416d90825ee5fd725760fd0a1dc54057163ebe6
 
 PKG_MAINTAINER:=Austin Lane <vidplace7@gmail.com>
 PKG_LICENSE:=GPL-3.0
