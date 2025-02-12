@@ -66,13 +66,4 @@ jobs:
         with:
           path: ${{ github.ref_name }}
 
-      - name: Upload packages to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          deploy_key: ${{ secrets.WRT_REPO_DEPLOY_KEY }}
-          external_repository: meshtastic/openwrt-repo
-          publish_dir: ${{ github.ref_name }}
-          destination_dir: ${{ github.ref_name }}
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
-          enable_jekyll: true
+
