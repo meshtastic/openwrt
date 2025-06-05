@@ -6,13 +6,13 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=meshtasticd-web
 # TODO renovate
-PKG_VERSION:=2.6.0
+PKG_VERSION:=2.6.4
 PKG_RELEASE:=1
 
 PKG_SOURCE:=build.tar
 PKG_SOURCE_URL:=https://github.com/meshtastic/web/releases/download/v$(PKG_VERSION)/
 # TODO renovate?
-PKG_HASH:=d01e7bdb687b6689b2e3e1f6d2ca71839ccce9301b3e2b519039ea23a1d66456
+PKG_HASH:=be29ae66667bcb4a4f8a36434621d9404e45b06c19e828400eb49b570dfb10b2
 UNPACK_CMD=\
 	mkdir -p $(1)/web; \
   $(TAR) -xf $(DL_DIR)/$(PKG_SOURCE) -C $(1)/web; \
