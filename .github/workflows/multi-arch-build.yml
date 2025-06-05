@@ -7,7 +7,7 @@ on:
       - openwrt-24.10
       - openwrt-23.05
     paths:
-      - '.github/workflows/multi-arch-build.yml'
+      - .github/workflows/multi-arch-build.yml
       - '**/Makefile'
 
   # Allows you to run this workflow manually from the Actions tab
@@ -59,12 +59,11 @@ jobs:
 
       - name: Build APK packages ${{ matrix.arch }}
         if: ${{ github.ref_name == 'main' }}
-        # uses: openwrt/gh-action-sdk@main  # Switch back when https://github.com/openwrt/gh-action-sdk/pull/46 is merged
-        uses: morytyann/gh-action-sdk@9f25772dff4788550a51688423f8f308d061025d
+        uses: openwrt/gh-action-sdk@main
         env:
           ARCH: "${{ matrix.arch }}-${{ github.ref_name }}"
-          FEEDNAME: "meshtastic"
-          IGNORE_ERRORS: "n m y"
+          FEEDNAME: meshtastic
+          IGNORE_ERRORS: n m y
           PRIVATE_KEY: "${{ secrets.WRT_APK_KEY }}"
           INDEX: 1
 
@@ -73,8 +72,8 @@ jobs:
         uses: openwrt/gh-action-sdk@main
         env:
           ARCH: "${{ matrix.arch }}-${{ github.ref_name }}"
-          FEEDNAME: "meshtastic"
-          IGNORE_ERRORS: "n m y"
+          FEEDNAME: meshtastic
+          IGNORE_ERRORS: n m y
           KEY_BUILD: "${{ secrets.WRT_IPK_KEY }}"
           INDEX: 1
 
@@ -104,6 +103,6 @@ jobs:
           external_repository: meshtastic/openwrt-repo
           publish_dir: ${{ github.ref_name }}
           destination_dir: ${{ github.ref_name }}
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
+          user_name: github-actions[bot]
+          user_email: github-actions[bot]@users.noreply.github.com
           enable_jekyll: true
