@@ -6,16 +6,16 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=meshtasticd
 # TODO renovate
-PKG_VERSION:=2.6.4
+PKG_VERSION:=2.6.5
 PKG_RELEASE:=1
 # TODO renovate
-PKG_SOURCE_VERSION:=v2.6.4.b89355f
+PKG_SOURCE_VERSION:=v2.6.5.fc3d9f2
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/meshtastic/firmware.git
 # TODO renovate?
-PKG_MIRROR_HASH:=e59e138b233b6d9282a0f1c80aa9b6773ef333bd57b78852046d6aaab6b14f08
+PKG_MIRROR_HASH:=1a4b4ce45b693b2e96d6297de5739e5d9f5ac675d9b093bbb181a9f7d6f5fefc
 PKG_BUILD_DEPENDS:= \
 	python3/host \
 	python-platformio/host \
