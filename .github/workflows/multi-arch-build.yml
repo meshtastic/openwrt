@@ -1,4 +1,4 @@
-name: Multi arch build packages
+name: Build/Deploy
 
 on:
   push:
@@ -23,6 +23,7 @@ jobs:
         arch:
           - aarch64_cortex-a53
           - aarch64_cortex-a72
+          - aarch64_cortex-a76
           - aarch64_generic
           - arm_arm1176jzf-s_vfp
           - arm_arm926ej-s
@@ -36,11 +37,14 @@ jobs:
           - arm_cortex-a9_neon
           - arm_cortex-a9_vfpv3-d16
           - arm_fa526
-          # - arm_mpcore  # Fails to create index?
           - arm_xscale
+          - armeb_xscale
           - i386_pentium-mmx
           - i386_pentium4
+          - loongarch64_generic
+          - mips64_mips64r2
           - mips64_octeonplus
+          - mips64el_mips64r2
           - mips_24kc
           - mips_4kec
           - mips_mips32
@@ -51,7 +55,7 @@ jobs:
           - powerpc64_e5500
           - powerpc_464fp
           - powerpc_8548
-          - riscv64_riscv64
+          - riscv64_generic
           - x86_64
 
     steps:
