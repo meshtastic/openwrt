@@ -32,8 +32,7 @@ define Package/python3-meshtastic
   DEPENDS:= \
 	+python3-light +python3-asyncio +python3-decimal +python3-logging \
 	+python3-pyserial +python3-requests +python3-yaml +python3-bleak \
-	+python3-tabulate +python3-protobuf +python3-pypubsub \
-	+python3-dotmap +python3-pyqrcode +python3-print-color
+	+python3-tabulate +python3-protobuf +python3-pypubsub
 endef
 
 define Package/python3-meshtastic/description
