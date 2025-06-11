@@ -5,11 +5,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=python-protobuf
-PKG_VERSION:=5.29.1
+PKG_VERSION:=5.29.5
 PKG_RELEASE:=1
 
 PYPI_NAME:=protobuf
-PKG_HASH:=683be02ca21a6ffe80db6dd02c0b5b2892322c59ca57fd6c872d652cb80549cb
+PKG_HASH:=bc1463bafd4b0929216c35f437a8e28731a2b7fe3d98bb77a600efced5a15c84
 
 PKG_MAINTAINER:=Austin Lane <vidplace7@gmail.com>
 PKG_LICENSE:=BSD-3-Clause
