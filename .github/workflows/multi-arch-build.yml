@@ -54,7 +54,8 @@ jobs:
           - powerpc64_e5500
           - powerpc_464fp
           - powerpc_8548
-          - riscv64_generic
+          # riscv64_riscv64 has been renamed to riscv64_generic in OpenWrt master
+          - ${{ (github.ref_name == 'main' && 'riscv64_generic') || 'riscv64_riscv64' }}
           - x86_64
 
     steps:
@@ -66,7 +67,6 @@ jobs:
         env:
           ARCH: "${{ matrix.arch }}-${{ github.ref_name }}"
           FEEDNAME: meshtastic
-          IGNORE_ERRORS: n m y
           PRIVATE_KEY: "${{ secrets.WRT_APK_KEY }}"
           INDEX: 1
 
@@ -78,7 +78,6 @@ jobs:
           FEEDNAME: meshtastic
           KEY_BUILD: "${{ secrets.WRT_IPK_KEY }}"
           INDEX: 1
-          V: s
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
