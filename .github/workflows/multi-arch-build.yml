@@ -7,7 +7,6 @@ on:
       - openwrt-24.10
       - openwrt-23.05
     paths:
-      - .github/workflows/multi-arch-build.yml
       - '**/Makefile'
 
   # Allows you to run this workflow manually from the Actions tab
@@ -63,7 +62,7 @@ jobs:
 
       - name: Build APK packages ${{ matrix.arch }}
         if: ${{ github.ref_name == 'main' }}
-        uses: openwrt/gh-action-sdk@main
+        uses: openwrt/gh-action-sdk@v9
         env:
           ARCH: "${{ matrix.arch }}-${{ github.ref_name }}"
           FEEDNAME: meshtastic
@@ -73,13 +72,13 @@ jobs:
 
       - name: Build IPK packages ${{ matrix.arch }}
         if: ${{ github.ref_name != 'main' }}
-        uses: openwrt/gh-action-sdk@main
+        uses: openwrt/gh-action-sdk@v9
         env:
           ARCH: "${{ matrix.arch }}-${{ github.ref_name }}"
           FEEDNAME: meshtastic
-          IGNORE_ERRORS: n m y
           KEY_BUILD: "${{ secrets.WRT_IPK_KEY }}"
           INDEX: 1
+          V: s
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
