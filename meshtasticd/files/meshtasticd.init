@@ -5,7 +5,7 @@ STOP=10
 USE_PROCD=1
 
 NAME=meshtasticd
-DAEMON=/usr/sbin/meshtasticd
+DAEMON=/usr/bin/meshtasticd
 DATA_DIR=/srv/meshtasticd
 
 CONFIG_BASEDIR=/etc/config/meshtasticd
