@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=meshtasticd
 # TODO renovate
 PKG_VERSION:=2.6.10
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 # TODO renovate
 PKG_SOURCE_VERSION:=v2.6.10.9ce4455
 
@@ -45,6 +45,7 @@ define Package/meshtasticd/Default
   CATEGORY:=Network
   TITLE:=Meshtastic Daemon
   URL:=http://github.com/meshtastic/firmware
+  USERID:=meshtasticd:meshtasticd
   DEPENDS:= \
 	+libgpiod +libyaml-cpp +zlib +bluez-libs +libpthread +libi2c +libuv \
 	+MESHTASTICD_ENABLE_SPI:kmod-spi-dev +MESHTASTICD_ENABLE_USB:libusb-1.0 \
