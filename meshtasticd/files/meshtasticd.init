@@ -24,10 +24,14 @@ start_service() {
 
 	mkdir -p "$data_dir"
 
+	chown -R meshtasticd:meshtasticd "$data_dir"
+	chown -R meshtasticd:meshtasticd "$config_dir"
+
 	# meshtasticd needs to be run from its data directory
 	cd "$data_dir"
 
 	procd_open_instance
+	procd_set_param user meshtasticd
 	procd_set_param command "$PROG"
 	procd_append_param command --fsdir="$data_dir"
 	procd_set_param file "$config_file"

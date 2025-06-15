@@ -37,6 +37,7 @@ define Package/meshtasticd/Default
   SUBMENU:=Meshtastic
   TITLE:=Meshtastic daemon
   URL:=https://github.com/meshtastic/firmware
+  USERID:=meshtasticd:meshtasticd
 endef
 
 # Leaving a possibility for adding a light variant without the web UI support if
