@@ -45,6 +45,7 @@ define Package/meshtasticd/Default
   CATEGORY:=Network
   TITLE:=Meshtastic Daemon
   URL:=http://github.com/meshtastic/firmware
+  USERID:=meshtasticd:meshtasticd
   DEPENDS:= \
 	+libgpiod +libyaml-cpp +zlib +bluez-libs +libpthread +libi2c +libuv \
 	+MESHTASTICD_ENABLE_SPI:kmod-spi-dev +MESHTASTICD_ENABLE_USB:libusb-1.0 \
