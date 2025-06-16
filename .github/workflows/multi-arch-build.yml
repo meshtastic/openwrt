@@ -55,7 +55,7 @@ jobs:
           - powerpc_464fp
           - powerpc_8548
           # riscv64_riscv64 has been renamed to riscv64_generic in OpenWrt master
-          - ${{ (github.ref_name == 'main' && 'riscv64_generic') || 'riscv64_riscv64' }}
+          - ${{ (github.ref_name == 'openwrt-24.10' || github.ref_name == 'openwrt-23.05') && 'riscv64_riscv64' || 'riscv64_generic' }}
           - x86_64
 
     steps:
