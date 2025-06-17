@@ -57,6 +57,21 @@ jobs:
           # riscv64_riscv64 has been renamed to riscv64_generic in OpenWrt master
           - ${{ (github.ref_name == 'openwrt-24.10' || github.ref_name == 'openwrt-23.05') && 'riscv64_riscv64' || 'riscv64_generic' }}
           - x86_64
+        rel_branch:
+          - ${{ github.ref_name }}
+        exclude:
+          - arch: aarch64_cortex-a76
+            rel_branch: openwrt-23.05
+          - arch: armeb_xscale
+            rel_branch: openwrt-23.05
+          - arch: loongarch64_generic
+            rel_branch: openwrt-23.05
+          - arch: mips64_mips64r2
+            rel_branch: openwrt-23.05
+          - arch: mips64el_mips64r2
+            rel_branch: openwrt-23.05
+          - arch: powerpc64_e5500
+            rel_branch: openwrt-23.05
 
     steps:
       - uses: actions/checkout@v4
