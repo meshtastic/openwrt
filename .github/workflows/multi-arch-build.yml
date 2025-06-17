@@ -6,6 +6,8 @@ on:
       - main
       - openwrt-24.10
       - openwrt-23.05
+      - openwrt-22.03
+      - openwrt-21.02
     paths:
       - '**/Makefile'
 
@@ -60,6 +62,7 @@ jobs:
         rel_branch:
           - ${{ github.ref_name }}
         exclude:
+          # OpenWRT 23.05
           - arch: aarch64_cortex-a76
             rel_branch: openwrt-23.05
           - arch: armeb_xscale
@@ -72,6 +75,36 @@ jobs:
             rel_branch: openwrt-23.05
           - arch: powerpc64_e5500
             rel_branch: openwrt-23.05
+          # OpenWRT 22.03
+          - arch: aarch64_cortex-a76
+            rel_branch: openwrt-22.03
+          - arch: armeb_xscale
+            rel_branch: openwrt-22.03
+          - arch: loongarch64_generic
+            rel_branch: openwrt-22.03
+          - arch: mips64_mips64r2
+            rel_branch: openwrt-22.03
+          - arch: mips64el_mips64r2
+            rel_branch: openwrt-22.03
+          - arch: powerpc64_e5500
+            rel_branch: openwrt-22.03
+          - arch: riscv64_generic
+            rel_branch: openwrt-22.03
+          # OpenWRT 21.02
+          - arch: aarch64_cortex-a76
+            rel_branch: openwrt-21.02
+          - arch: armeb_xscale
+            rel_branch: openwrt-21.02
+          - arch: loongarch64_generic
+            rel_branch: openwrt-21.02
+          - arch: mips64_mips64r2
+            rel_branch: openwrt-21.02
+          - arch: mips64el_mips64r2
+            rel_branch: openwrt-21.02
+          - arch: powerpc64_e5500
+            rel_branch: openwrt-21.02
+          - arch: riscv64_generic
+            rel_branch: openwrt-21.02
 
     steps:
       - uses: actions/checkout@v4
