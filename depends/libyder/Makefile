@@ -6,12 +6,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libyder
-PKG_VERSION:=1.4.20
+PKG_VERSION:=1.4.14
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/babelouest/yder/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=c1a7f2281514d0d0bba912b6b70f371d8c127ccfd644b8c438c9301a0fd4c5f2
+PKG_HASH:=20b38969abe32022d938c4078fc137fafc8613cae8890efc97a754a6dee07e1f
 
 PKG_MAINTAINER:=Austin Lane <vidplace7@gmail.com>
 PKG_LICENSE:=LGPL-2.1-or-later
