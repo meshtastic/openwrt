@@ -1,0 +1,34 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+STOP=10
+
+OVERLAY_NAME="mt7981b-openwrt-one-mikrobus-spidev"
+OVERLAY_PATH="/sys/kernel/config/device-tree/overlays/$OVERLAY_NAME"
+DTBO_FILE="/lib/firmware/device-tree/overlays/$OVERLAY_NAME.dtbo"
+
+start() {
+    # Mount configfs if not already mounted
+    grep -q /sys/kernel/config /proc/mounts || \
+        mount -t configfs configfs /sys/kernel/config
+
+    [ -d /sys/kernel/config/device-tree/overlays ] || {
+        log "userspace device tree overlay support not found."
+        return 1
+    }
+
+    # Create overlay directory and load the dtbo
+    if [ -f "$DTBO_FILE" ] && [ ! -d "$OVERLAY_PATH" ]; then
+        mkdir -p "$OVERLAY_PATH"
+        cat "$DTBO_FILE" > "$OVERLAY_PATH/dtbo"
+        log "Loaded device tree overlay: $OVERLAY_NAME"
+    fi
+}
+
+stop() {
+    # Remove the overlay
+    if [ -d "$OVERLAY_PATH" ]; then
+        rmdir "$OVERLAY_PATH" 2>/dev/null
+        log "Unloaded device tree overlay: $OVERLAY_NAME"
+    fi
+}
