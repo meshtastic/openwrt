@@ -16,7 +16,7 @@ include $(INCLUDE_DIR)/package.mk
 # @TARGET_mediatek_filogic
 define Package/openwrt-one-mikrobus-spidev
 	TITLE:=openwrt-one-mikrobus-spidev
-	DEPENDS:=+kmod-spi-dev +kmod-fs-configfs @aarch64
+	DEPENDS:=+kmod-spi-dev +kmod-fs-dtbocfg @aarch64
 endef
 
 define Package/openwrt-one-mikrobus-spidev/description
