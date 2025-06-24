@@ -7,6 +7,10 @@ OVERLAY_NAME="mt7981b-openwrt-one-mikrobus-spidev"
 OVERLAY_PATH="/sys/kernel/config/device-tree/overlays/$OVERLAY_NAME"
 DTBO_FILE="/lib/firmware/device-tree/overlays/$OVERLAY_NAME.dtbo"
 
+log() {
+    logger -t dtbo-mikrobus-spidev "$@"
+}
+
 start() {
     # Mount configfs if not already mounted
     grep -q /sys/kernel/config /proc/mounts || \
