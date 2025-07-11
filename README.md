@@ -1,6 +1,6 @@
-# Meshtastic OpenWRT
+# Meshtastic OpenWrt
 
-Meshtastic Packages for OpenWRT
+Meshtastic Packages for OpenWrt
 
 Branches:
 - `main` (SNAPSHOT)
