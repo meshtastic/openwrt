@@ -7,7 +7,6 @@ on:
       - openwrt-24.10
       - openwrt-23.05
       - openwrt-22.03
-      - openwrt-21.02
     paths:
       - '**/Makefile'
 
@@ -56,7 +55,7 @@ jobs:
           - powerpc64_e5500
           - powerpc_464fp
           # powerpc_8540 was replaced by powerpc_8548 in OpenWrt 23.05+
-          - ${{ (github.ref_name == 'openwrt-22.03' || github.ref_name == 'openwrt-21.02') && 'powerpc_8540' || 'powerpc_8548' }}
+          - ${{ github.ref_name == 'openwrt-22.03' && 'powerpc_8540' || 'powerpc_8548' }}
           # riscv64_riscv64 has been renamed to riscv64_generic in OpenWrt master
           - ${{ (github.ref_name == 'openwrt-24.10' || github.ref_name == 'openwrt-23.05') && 'riscv64_riscv64' || 'riscv64_generic' }}
           - x86_64
@@ -91,21 +90,6 @@ jobs:
             rel_branch: openwrt-22.03
           - arch: riscv64_generic
             rel_branch: openwrt-22.03
-          # OpenWrt 21.02
-          - arch: aarch64_cortex-a76
-            rel_branch: openwrt-21.02
-          - arch: armeb_xscale
-            rel_branch: openwrt-21.02
-          - arch: loongarch64_generic
-            rel_branch: openwrt-21.02
-          - arch: mips64_mips64r2
-            rel_branch: openwrt-21.02
-          - arch: mips64el_mips64r2
-            rel_branch: openwrt-21.02
-          - arch: powerpc64_e5500
-            rel_branch: openwrt-21.02
-          - arch: riscv64_generic
-            rel_branch: openwrt-21.02
 
     steps:
       - uses: actions/checkout@v4
