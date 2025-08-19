@@ -6,16 +6,16 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=python-meshtastic
 # TODO renovate
-PKG_VERSION:=2.6.3
+PKG_VERSION:=2.7.1
 PKG_RELEASE:=1
 
 PYPI_NAME:=meshtastic
 # TODO renovate?
-PKG_HASH:=6891b84d1d9f47962a33989524a992b9162f928a7dfebd3b9c675b8f1619f35b
+PKG_HASH:=8343c3be8a65b2fae185a846867855a6df14d088bf859d88534ee44fc6dc202c
 
 PKG_MAINTAINER:=Austin Lane <vidplace7@gmail.com>
 PKG_LICENSE:=GPL-3.0
-PKG_LICENSE_FILES:=LICENSES/GPL-3.0-only.txt
+PKG_LICENSE_FILES:=LICENSE.md
 
 PKG_BUILD_DEPENDS:=python-poetry-core/host
 
