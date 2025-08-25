@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=meshtasticd
 # TODO renovate
 PKG_VERSION:=2.6.11
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 # TODO renovate
 PKG_SOURCE_VERSION:=v2.6.11.60ec05e
 
