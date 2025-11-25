@@ -103,7 +103,7 @@ jobs:
             rel_branch: openwrt-22.03
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Build APK packages ${{ matrix.arch }}
         if: ${{ github.ref_name == 'main' }}
