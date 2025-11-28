@@ -25,7 +25,6 @@ jobs:
           - aarch64_cortex-a72
           - aarch64_cortex-a76
           - aarch64_generic
-          - arc_archs # Only used in OpenWrt 22.03
           - arm_arm1176jzf-s_vfp
           - arm_arm926ej-s
           - arm_cortex-a15_neon-vfpv4
@@ -64,19 +63,14 @@ jobs:
           - ${{ github.ref_name }}
         exclude:
           # OpenWrt main (SNAPSHOT)
-          - arch: arc_archs
-            rel_branch: main
           - arch: mips_4kec # https://lists.openwrt.org/pipermail/openwrt-devel/2025-August/044216.html
             rel_branch: main
           - arch: mipsel_24kc_24kf # Ignore temporarily, broken in OpenWrt SNAPSHOT
             rel_branch: main
           # OpenWrt 24.10
-          - arch: arc_archs
-            rel_branch: openwrt-24.10
+          ## None
           # OpenWrt 23.05
           - arch: aarch64_cortex-a76
-            rel_branch: openwrt-23.05
-          - arch: arc_archs
             rel_branch: openwrt-23.05
           - arch: armeb_xscale
             rel_branch: openwrt-23.05
