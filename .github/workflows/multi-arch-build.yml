@@ -103,7 +103,7 @@ jobs:
 
       - name: Build APK packages ${{ matrix.arch }}
         if: ${{ github.ref_name == 'main' }}
-        uses: openwrt/gh-action-sdk@v9
+        uses: openwrt/gh-action-sdk@v10
         env:
           ARCH: "${{ matrix.arch }}-${{ github.ref_name }}"
           FEEDNAME: meshtastic
@@ -112,7 +112,7 @@ jobs:
 
       - name: Build IPK packages ${{ matrix.arch }}
         if: ${{ github.ref_name != 'main' }}
-        uses: openwrt/gh-action-sdk@v9
+        uses: openwrt/gh-action-sdk@v10
         env:
           ARCH: "${{ matrix.arch }}-${{ github.ref_name }}"
           FEEDNAME: meshtastic
