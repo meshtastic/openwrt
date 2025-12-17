@@ -69,7 +69,10 @@ jobs:
           - arch: mipsel_24kc_24kf # Ignore temporarily, broken in OpenWrt SNAPSHOT
             rel_branch: main
           # OpenWrt 25.12
-          ## None
+          - arch: mips_4kec # https://lists.openwrt.org/pipermail/openwrt-devel/2025-August/044216.html
+            rel_branch: openwrt-25.12
+          - arch: mipsel_24kc_24kf # Ignore temporarily, broken in OpenWrt 25.12
+            rel_branch: openwrt-25.12
           # OpenWrt 24.10
           ## None
           # OpenWrt 23.05
