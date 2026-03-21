@@ -30,7 +30,7 @@ define Package/meshtasticd-web
   CATEGORY:=Network
   TITLE:=Meshtastic Daemon Web Interface
   URL:=http://github.com/meshtastic/firmware
-  DEPENDS:=meshtasticd
+  DEPENDS:=meshtasticd libmicrohttpd-ssl
 endef
 
 define Package/meshtasticd-web/description
