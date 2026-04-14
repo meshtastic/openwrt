@@ -6,16 +6,16 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=meshtasticd
 # TODO renovate
-PKG_VERSION:=2.7.15
+PKG_VERSION:=2.7.22
 PKG_RELEASE:=1
 # TODO renovate
-PKG_SOURCE_VERSION:=v2.7.15.567b8ea
+PKG_SOURCE_VERSION:=v2.7.22.96dd647
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/meshtastic/firmware.git
 # TODO renovate?
-PKG_MIRROR_HASH:=494c4f4f84719237b08fc487c66c2c7a3b760b4b1d9a929358fcc801c67d8bcc
+PKG_MIRROR_HASH:=314341fd472777c38526b3b379810262104c34ba5b276353d214bd91f586fe12
 PKG_BUILD_DEPENDS:= \
 	python3/host \
 	python-platformio/host \
@@ -117,7 +117,7 @@ endef
 
 define Package/meshtasticd/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/.pio/build/buildroot/program $(1)/usr/bin/meshtasticd
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/.pio/build/buildroot/meshtasticd $(1)/usr/bin/meshtasticd
 
 	$(INSTALL_DIR) $(1)/etc/meshtasticd
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/bin/config-dist.yaml $(1)/etc/meshtasticd/config.yaml
