@@ -6,12 +6,12 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=python-meshtastic
 # TODO renovate
-PKG_VERSION:=2.7.5
+PKG_VERSION:=2.7.8
 PKG_RELEASE:=1
 
 PYPI_NAME:=meshtastic
 # TODO renovate?
-PKG_HASH:=f152563b253b85e75af6ba17d7386c33643e6ef90aae7225b411890614618503
+PKG_HASH:=98292e43884e239429056b8a0b31291e169a0b7ededae2c7caa737a8cc9f1a97
 
 PKG_MAINTAINER:=Austin Lane <vidplace7@gmail.com>
 PKG_LICENSE:=GPL-3.0
