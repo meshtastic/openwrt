@@ -109,7 +109,7 @@ jobs:
 
       - name: Build APK packages ${{ matrix.arch }}
         if: ${{ github.ref_name == 'main' || github.ref_name == 'openwrt-25.12' }}
-        uses: openwrt/gh-action-sdk@v10
+        uses: openwrt/gh-action-sdk@v11
         env:
           ARCH: "${{ matrix.arch }}-${{ github.ref_name }}"
           FEEDNAME: meshtastic
@@ -118,7 +118,7 @@ jobs:
 
       - name: Build IPK packages ${{ matrix.arch }}
         if: ${{ github.ref_name != 'main' && github.ref_name != 'openwrt-25.12' }}
-        uses: openwrt/gh-action-sdk@v10
+        uses: openwrt/gh-action-sdk@v11
         env:
           ARCH: "${{ matrix.arch }}-${{ github.ref_name }}"
           FEEDNAME: meshtastic
