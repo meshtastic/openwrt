@@ -105,7 +105,7 @@ jobs:
             rel_branch: openwrt-22.03
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Build APK packages ${{ matrix.arch }}
         if: ${{ github.ref_name == 'main' || github.ref_name == 'openwrt-25.12' }}
