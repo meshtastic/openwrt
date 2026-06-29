@@ -6,12 +6,12 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=python-meshtastic
 # TODO renovate
-PKG_VERSION:=2.7.8
+PKG_VERSION:=2.7.10
 PKG_RELEASE:=1
 
 PYPI_NAME:=meshtastic
 # TODO renovate?
-PKG_HASH:=98292e43884e239429056b8a0b31291e169a0b7ededae2c7caa737a8cc9f1a97
+PKG_HASH:=bf0c7ee2451245ab20be8340d2ea87f25069be86d70ad9af22b2366c6d68eee1
 
 PKG_MAINTAINER:=Austin Lane <vidplace7@gmail.com>
 PKG_LICENSE:=GPL-3.0
@@ -31,8 +31,8 @@ define Package/python3-meshtastic
   URL:=https://pypi.org/project/meshtastic
   DEPENDS:= \
 	+python3-light +python3-asyncio +python3-decimal +python3-logging \
-	+python3-pyserial +python3-requests +python3-yaml +python3-bleak \
-	+python3-tabulate +python3-protobuf +python3-pypubsub
+	+python3-packaging +python3-pyserial +python3-requests +python3-yaml \
+	+python3-bleak +python3-tabulate +python3-protobuf +python3-pypubsub
 endef
 
 define Package/python3-meshtastic/description
