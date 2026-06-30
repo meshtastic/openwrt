@@ -1,6 +1,4 @@
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
+# SPDX-License-Identifier: GPL-2.0-only
 
 include $(TOPDIR)/rules.mk
 
@@ -11,16 +9,11 @@ PKG_RELEASE:=1
 PYPI_NAME:=ajsonrpc
 PKG_HASH:=791bac18f0bf0dee109194644f151cf8b7ff529c4b8d6239ac48104a3251a19f
 
-PKG_MAINTAINER:=Austin Lane <vidplace7@gmail.com>
+PKG_MAINTAINER:=Alexandru Ardelean <ardeleanalex@gmail.com>
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE.txt
 
-HOST_BUILD_DEPENDS:= \
-	python3/host \
-	python-build/host \
-	python-installer/host \
-	python-wheel/host \
-	python-setuptools/host
+HOST_BUILD_DEPENDS:=python-setuptools/host
 PKG_BUILD_DEPENDS:=python-setuptools/host
 
 include $(TOPDIR)/feeds/packages/lang/python/pypi.mk
@@ -33,13 +26,18 @@ define Package/python3-ajsonrpc
   SECTION:=lang
   CATEGORY:=Languages
   SUBMENU:=Python
-  TITLE:=Python Library for implementing JSON-RPC 2.0
-  URL:=https://pypi.org/project/ajsonrpc
-  DEPENDS:=+python3-light +python3-asyncio +python3-logging
+  TITLE:=Async JSON-RPC 2.0 protocol + asyncio server
+  URL:=https://github.com/pavlov99/ajsonrpc
+  DEPENDS:= \
+    +python3-asyncio \
+    +python3-light \
+    +python3-logging
 endef
 
 define Package/python3-ajsonrpc/description
-Python JSON-RPC 2.0 implementation and asynchronous server powered by asyncio
+  Lightweight JSON-RPC 2.0 protocol implementation and asynchronous server
+  powered by asyncio. This library is a successor of json-rpc and written
+  by the same team.
 endef
 
 $(eval $(call Py3Package,python3-ajsonrpc))
