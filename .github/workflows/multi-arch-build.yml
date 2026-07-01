@@ -117,8 +117,18 @@ jobs:
           INDEX: 1
 
       - name: Build IPK packages ${{ matrix.arch }}
-        if: ${{ github.ref_name != 'main' && github.ref_name != 'openwrt-25.12' }}
+        if: ${{ github.ref_name == 'openwrt-24.10' }}
         uses: openwrt/gh-action-sdk@v11
+        env:
+          ARCH: "${{ matrix.arch }}-${{ github.ref_name }}"
+          FEEDNAME: meshtastic
+          KEY_BUILD: "${{ secrets.WRT_IPK_KEY }}"
+          INDEX: 1
+
+      - name: Build IPK packages (Legacy) ${{ matrix.arch }}
+        if: ${{ github.ref_name == 'openwrt-23.05' || github.ref_name == 'openwrt-22.03' }}
+        # Use legacy v10 action for OpenWrt 23.05 and 22.03 due to compatibility issues
+        uses: openwrt/gh-action-sdk@v10
         env:
           ARCH: "${{ matrix.arch }}-${{ github.ref_name }}"
           FEEDNAME: meshtastic
