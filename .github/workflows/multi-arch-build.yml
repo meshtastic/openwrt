@@ -129,7 +129,8 @@ jobs:
         if: ${{ github.ref_name == 'openwrt-23.05' }}
         uses: openwrt/gh-action-sdk@v11
         env:
-          ARCH: "${{ matrix.arch }}-openwrt-23.05.6"
+          # Override ARCH to use the last supported release, 23.05.6
+          ARCH: "${{ matrix.arch }}-23.05.6"
           FEEDNAME: meshtastic
           KEY_BUILD: "${{ secrets.WRT_IPK_KEY }}"
           INDEX: 1
