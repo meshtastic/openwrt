@@ -1,39 +1,30 @@
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
+# SPDX-License-Identifier: GPL-2.0-only
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=meshtasticd
-# TODO renovate
 PKG_VERSION:=2.7.26
+PKG_SOURCE_VERSION:=v$(PKG_VERSION).54e0d8d
 PKG_RELEASE:=1
-# TODO renovate
-PKG_SOURCE_VERSION:=v2.7.26.54e0d8d
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/meshtastic/firmware.git
-# TODO renovate?
 PKG_MIRROR_HASH:=dc1d9843514b92590eaac0a329208b699e330522688215cfc8441c8945de4782
+
+FRONTEND_VERSION:=2.6.7
+FRONTEND_DEST:=$(PKG_NAME)-frontend-$(FRONTEND_VERSION).tar
+FRONTEND_URL:=https://github.com/meshtastic/web/releases/download/v$(FRONTEND_VERSION)/
+FRONTEND_HASH:=a34f4360a0486543a698de20de533557492e763ab459fc27fcea95d0495144ed
+
 PKG_BUILD_DEPENDS:= \
 	python3/host \
 	python-platformio/host \
-	!USE_GLIBC:argp-standalone \
-	libgpiod \
-	libyaml-cpp \
-	zlib \
-	bluez \
-	i2c-tools \
-	libuv \
-	MESHTASTICD_ENABLE_USB:libusb \
-	MESHTASTICD_ENABLE_WEB:openssl \
-	MESHTASTICD_ENABLE_WEB:liborcania \
-	MESHTASTICD_ENABLE_WEB:libyder \
-	MESHTASTICD_ENABLE_WEB:libulfius
+	python-pyelftools/host \
+	!USE_GLIBC:argp-standalone
 
-PKG_MAINTAINER:=Austin Lane <vidplace7@gmail.com>
-PKG_LICENSE:=GPL-3.0
+PKG_MAINTAINER:=Austin Lane <vidplace7@gmail.com>, George Sapkin <george@sapk.in>
+PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
 
 include $(INCLUDE_DIR)/package.mk
@@ -43,91 +34,139 @@ include $(INCLUDE_DIR)/nls.mk
 define Package/meshtasticd/Default
   SECTION:=net
   CATEGORY:=Network
-  TITLE:=Meshtastic Daemon
-  URL:=http://github.com/meshtastic/firmware
-  DEPENDS:= \
-	+libgpiod +libyaml-cpp +zlib +bluez-libs +libpthread +libi2c +libuv \
-	+MESHTASTICD_ENABLE_SPI:kmod-spi-dev +MESHTASTICD_ENABLE_USB:libusb-1.0 \
-	+MESHTASTICD_ENABLE_WEB:libopenssl \
-	+MESHTASTICD_ENABLE_WEB:liborcania +MESHTASTICD_ENABLE_WEB:libyder +MESHTASTICD_ENABLE_WEB:libulfius-gnutls \
-	$(INTL_DEPENDS)
+  SUBMENU:=Meshtastic
+  TITLE:=Meshtastic daemon
+  URL:=https://github.com/meshtastic/firmware
 endef
 
-Package/meshtasticd = $(Package/meshtasticd/Default)
+# Leaving a possibility for adding a light variant without the web UI support if
+# it's made configurable upstream. Currently headers are autodetected so it's
+# not possible to add it.
+define Package/meshtasticd-full
+  $(call Package/meshtasticd/Default)
+  TITLE+= (with web UI support)
+  DEPENDS:= \
+    +bluez-libs \
+    +kmod-spi-dev \
+    +libgpiod \
+    +libi2c \
+    +libopenssl \
+    +liborcania \
+    +libulfius-gnutls \
+    +libusb-1.0 \
+    +libuv \
+    +libyaml-cpp \
+    +libyder \
+    +zlib \
+    $(INTL_DEPENDS)
+  PROVIDES:=meshtasticd
+endef
 
 define Package/meshtasticd-avahi-service
   $(call Package/meshtasticd/Default)
   TITLE+= (avahi service)
-  DEPENDS:=meshtasticd +avahi-daemon
+  DEPENDS:= \
+    +avahi-daemon \
+    +meshtasticd
 endef
 
-define Package/meshtasticd/description
-  Meshtastic Daemon
+define Package/meshtasticd-web
+  $(call Package/meshtasticd/Default)
+  TITLE:=Meshtastic daemon web interface
+  URL:=https://github.com/meshtastic/web
+  DEPENDS:=+meshtasticd-full
+  VERSION:=$(FRONTEND_VERSION)-r$(PKG_RELEASE)
+endef
+
+define Package/meshtasticd-full/description
+  Meshtastic daemon with web interface support
 endef
 
 define Package/meshtasticd-avahi-service/description
-This package contains the service definition for announcing the
-meshtastic daemon via mDNS.
+  Service definition for announcing the Meshtastic daemon via mDNS
 endef
 
-define Package/meshtasticd/config
-config MESHTASTICD_ENABLE_SPI
-	bool "spi lora radio support"
-	default y
-	help
-	  SPI LoRa radio support for meshtasticd
-
-config MESHTASTICD_ENABLE_USB
-	bool "usb lora radio support"
-	default y
-	help
-	  USB LoRa radio support for meshtasticd
-
-config MESHTASTICD_ENABLE_WEB
-	bool "webui support"
-	select PACKAGE_meshtasticd-web
-	default y
-	help
-	  Adds support for the meshtasticd webui
+define Package/meshtasticd-web/description
+  The official Meshtastic web interface
 endef
 
-PLATFORMIO_BUILD_FLAGS = \
-	-Os -ffunction-sections -fdata-sections -Wl,--gc-sections \
-	$(if $(INTL_FULL),-lintl) \
+define Download/meshtasticd-web
+  URL:=$(FRONTEND_URL)
+  URL_FILE:=build.tar
+  FILE:=$(FRONTEND_DEST)
+  HASH:=$(FRONTEND_HASH)
+endef
+
+PLATFORMIO_BUILD_FLAGS := \
+	-fdata-sections \
+	-ffunction-sections \
+	-Os \
+	-Wl,--gc-sections \
+	-lcrypto \
+	-lorcania \
+	-lssl \
+	-lulfius \
+	-lyder \
 	$(if $(CONFIG_USE_GLIBC),,-largp) \
-	$(if $(CONFIG_MESHTASTICD_ENABLE_WEB),-lssl -lcrypto) \
-	$(if $(CONFIG_MESHTASTICD_ENABLE_WEB),-lorcania -lyder -lulfius)
+	$(if $(INTL_FULL),-lintl)
 
-define Build/Compile
+BUILD_FLAGS := \
 	TARGET_AR="$(TARGET_AR)" \
 	TARGET_AS="$(TARGET_CC) -c $(TARGET_ASFLAGS)" \
 	TARGET_CC="$(TARGET_CC)" \
-	TARGET_CXX="$(TARGET_CXX)" \
-	TARGET_LDFLAGS="$(TARGET_LDFLAGS)" \
 	TARGET_CFLAGS="$(TARGET_CFLAGS)" \
+	TARGET_CXX="$(TARGET_CXX)" \
 	TARGET_CXXFLAGS="$(TARGET_CXXFLAGS)" \
 	TARGET_LD="$(TARGET_LD)" \
+	TARGET_LDFLAGS="$(TARGET_LDFLAGS)" \
 	TARGET_OBJCOPY="$(TARGET_CROSS)objcopy" \
 	TARGET_RANLIB="$(TARGET_RANLIB)" \
-	PLATFORMIO_BUILD_FLAGS="$(PLATFORMIO_BUILD_FLAGS)" \
-	PLATFORMIO_CACHE_DIR="$(DL_DIR)/.platformio_cache" \
-	PLATFORMIO_BUILD_CACHE_DIR="$(PKG_BUILD_DIR)/.pio_build_cache" \
-	$(HOST_PYTHON3_BIN) -m platformio run --environment buildroot --project-dir $(PKG_BUILD_DIR)
+	PLATFORMIO_BUILD_CACHE_DIR="$(PKG_BUILD_DIR)/.pio-build-cache" \
+	PLATFORMIO_CACHE_DIR="$(DL_DIR)/platformio-cache"
+
+define Build/Prepare/meshtasticd-web
+	mkdir -p $(PKG_BUILD_DIR)/web
+	$(HOST_TAR) -xf $(DL_DIR)/$(FRONTEND_DEST) -C $(PKG_BUILD_DIR)/web
+	gzip -dr $(PKG_BUILD_DIR)/web/
 endef
 
-define Package/meshtasticd/install
-	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/.pio/build/buildroot/meshtasticd $(1)/usr/bin/meshtasticd
+define Build/Prepare
+	$(call Build/Prepare/Default)
+	$(call Build/Prepare/meshtasticd-web)
+endef
+
+define Build/Compile/meshtasticd-full
+	mkdir -p $(PKG_BUILD_DIR)/full
+
+	$(BUILD_FLAGS) \
+	PLATFORMIO_BUILD_DIR="$(PKG_BUILD_DIR)/full" \
+	PLATFORMIO_BUILD_FLAGS="$(PLATFORMIO_BUILD_FLAGS)" \
+	$(HOST_PYTHON3_BIN) -m platformio run \
+		--environment buildroot \
+		--project-dir $(PKG_BUILD_DIR)
+endef
+
+define Build/Compile
+	$(call Build/Compile/meshtasticd-full)
+endef
+
+define Package/meshtasticd-full/install
+	$(INSTALL_DIR) $(1)/etc/config
+	$(INSTALL_CONF) ./files/meshtasticd.conf $(1)/etc/config/meshtasticd
 
 	$(INSTALL_DIR) $(1)/etc/meshtasticd
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/bin/config-dist.yaml $(1)/etc/meshtasticd/config.yaml
-	$(INSTALL_DIR) $(1)/etc/meshtasticd/config.d
+
 	$(INSTALL_DIR) $(1)/etc/meshtasticd/available.d
 	$(CP) -R $(PKG_BUILD_DIR)/bin/config.d/* $(1)/etc/meshtasticd/available.d
 
+	$(INSTALL_DIR) $(1)/etc/meshtasticd/config.d
+
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_DIR) $(1)/srv/meshtasticd
 	$(INSTALL_BIN) ./files/meshtasticd.init $(1)/etc/init.d/meshtasticd
+
+	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/full/buildroot/meshtasticd $(1)/usr/bin/meshtasticd
 endef
 
 define Package/meshtasticd-avahi-service/install
@@ -135,13 +174,25 @@ define Package/meshtasticd-avahi-service/install
 	$(INSTALL_CONF) ./files/meshtasticd.service $(1)/etc/avahi/services/
 endef
 
-define Package/meshtasticd/conffiles
+define Package/meshtasticd-web/install
+	$(INSTALL_DIR) $(1)/usr/share/meshtasticd/web
+	$(CP) $(PKG_BUILD_DIR)/web/* $(1)/usr/share/meshtasticd/web
+
+	$(INSTALL_DIR) $(1)/etc/meshtasticd/ssl
+endef
+
+define Package/meshtasticd-full/conffiles
+/etc/config/meshtasticd
+/etc/meshtasticd/config.d/
 /etc/meshtasticd/config.yaml
+/etc/meshtasticd/ssl
 endef
 
 define Package/meshtasticd-avahi-service/conffiles
 /etc/avahi/services/meshtasticd.service
 endef
 
-$(eval $(call BuildPackage,meshtasticd))
+$(eval $(call Download,meshtasticd-web))
+$(eval $(call BuildPackage,meshtasticd-full))
 $(eval $(call BuildPackage,meshtasticd-avahi-service))
+$(eval $(call BuildPackage,meshtasticd-web))
