@@ -3,19 +3,19 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=meshtasticd
-PKG_VERSION:=2.7.26
-PKG_SOURCE_VERSION:=v$(PKG_VERSION).54e0d8d
+PKG_VERSION:=2.8.1
+PKG_SOURCE_VERSION:=v$(PKG_VERSION).8e6a88d
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/meshtastic/firmware.git
-PKG_MIRROR_HASH:=dc1d9843514b92590eaac0a329208b699e330522688215cfc8441c8945de4782
+PKG_MIRROR_HASH:=ac87527d7295a7e9aa6670c75e466d670fe91d9ea2ec66438f13ce1b2cd28375
 
-FRONTEND_VERSION:=2.6.7
+FRONTEND_VERSION:=2.7.2
 FRONTEND_DEST:=$(PKG_NAME)-frontend-$(FRONTEND_VERSION).tar
 FRONTEND_URL:=https://github.com/meshtastic/web/releases/download/v$(FRONTEND_VERSION)/
-FRONTEND_HASH:=a34f4360a0486543a698de20de533557492e763ab459fc27fcea95d0495144ed
+FRONTEND_HASH:=62657b85b4c24af4d44da2932b64143abdbf6e65a79fcb51fd0801d9540616e2
 
 PKG_BUILD_DEPENDS:= \
 	python3/host \
@@ -58,6 +58,7 @@ define Package/meshtasticd-full
     +libyaml-cpp \
     +libyder \
     +zlib \
+    +jsoncpp \
     $(INTL_DEPENDS)
   PROVIDES:=meshtasticd
 endef
