@@ -3,11 +3,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=python-meshtastic
-PKG_VERSION:=2.7.10
+PKG_VERSION:=2.7.11
 PKG_RELEASE:=1
 
 PYPI_NAME:=meshtastic
-PKG_HASH:=bf0c7ee2451245ab20be8340d2ea87f25069be86d70ad9af22b2366c6d68eee1
+PKG_HASH:=41a8c84b577daff173d36db9fdbc8bf2c7228b58e580474e9f53802ed8ea7d4a
 
 PKG_MAINTAINER:=Austin Lane <vidplace7@gmail.com>, George Sapkin <george@sapk.in>
 PKG_LICENSE:=GPL-3.0-only
