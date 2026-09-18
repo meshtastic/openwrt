@@ -117,20 +117,11 @@ jobs:
           INDEX: 1
 
       - name: Build IPK packages ${{ matrix.arch }}
-        if: github.ref_name == 'openwrt-24.10' || github.ref_name == 'openwrt-22.03'
+        if: github.ref_name == 'openwrt-24.10' || github.ref_name == 'openwrt-23.05' || github.ref_name == 'openwrt-22.03'
         uses: openwrt/gh-action-sdk@v11
         env:
-          ARCH: "${{ matrix.arch }}-${{ github.ref_name }}"
-          FEEDNAME: meshtastic
-          KEY_BUILD: "${{ secrets.WRT_IPK_KEY }}"
-          INDEX: 1
-
-      - name: Build IPK packages (23.05) ${{ matrix.arch }}
-        if: github.ref_name == 'openwrt-23.05'
-        uses: openwrt/gh-action-sdk@v11
-        env:
-          # Override ARCH to use the last supported release, 23.05.6
-          ARCH: "${{ matrix.arch }}-23.05.6"
+          # For 23.05 branch: Override ARCH to use the last supported release, 23.05.6
+          ARCH: "${{ matrix.arch }}-${{ contains(github.ref_name, '23.05') && '23.05.6' || github.ref_name }}"
           FEEDNAME: meshtastic
           KEY_BUILD: "${{ secrets.WRT_IPK_KEY }}"
           INDEX: 1
@@ -141,22 +132,14 @@ jobs:
           name: ${{ matrix.arch }}
           path: bin/packages/${{ matrix.arch }}/meshtastic/
 
-  deploy:
+  deploy-pages:
     name: Deploy packages to GitHub Pages
     runs-on: ubuntu-26.04
     needs: build
     concurrency:
       # Only run one deploy at a time
-      group: publish-builds
-    env:
-      r2_bucket: meshtastic-openwrt-repo
+      group: publish-pages
     steps:
-      # Only the repo homepage is needed for the deployment.
-      - name: Fetch openwrt-repo metadata
-        uses: actions/checkout@v7
-        with:
-          sparse-checkout: .github/openwrt-repo
-
       - name: Download artifacts
         uses: actions/download-artifact@v8
         with:
@@ -173,11 +156,31 @@ jobs:
           user_email: github-actions[bot]@users.noreply.github.com
           enable_jekyll: true
 
-      # - name: Render README.md to index.html
-      #   if: github.ref_name == 'main'
-      #   run: >
-      #     pandoc .github/openwrt-repo/README.md -t html5
-      #     -o ${{ github.ref_name }}/index.html
+  deploy-r2:
+    name: Deploy packages to Cloudflare R2
+    runs-on: ubuntu-26.04
+    needs: build
+    concurrency:
+      # Only run one deploy at a time
+      group: publish-r2
+    env:
+      r2_bucket: meshtastic-openwrt-repo
+    steps:
+      # Only the index action and the page templates are needed for the deployment.
+      - name: Fetch openwrt-repo metadata
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: |
+            .github/actions
+            .github/openwrt-repo
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: ${{ github.ref_name }}
+
+      - name: Generate html directory index
+        uses: ./.github/actions/generate-index
 
       - name: Upload packages to Cloudflare R2
         env:

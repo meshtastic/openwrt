@@ -1,0 +1,54 @@
+name: Generate HTML directory index
+description: >
+  Render an index.html for the current branch's package directory and for each
+  of its architecture subdirectories, wrapping tree's file listing in the page
+  chrome from .github/openwrt-repo.
+
+runs:
+  using: composite
+  steps:
+    - name: Substitute placeholders in template
+      shell: bash
+      env:
+        WRT_VERSION: ${{ github.ref_name == 'main' && 'main / SNAPSHOT' || github.ref_name }}
+        TEMPLATE_DIR: ${{ github.workspace }}/.github/openwrt-repo
+      run: |
+        set -euo pipefail
+        shopt -s nullglob
+
+        # Substitute placeholders in the index header template.
+        sed -e "s|%%WRT_VERSION%%|$WRT_VERSION|g" \
+            -e "s|%%COMMIT%%|$GITHUB_SHA|g" \
+            -e "s|%%COMMIT_SHORT%%|${GITHUB_SHA:0:7}|g" \
+            -e "s|%%BUILD_DATE%%|$(date -u +'%Y-%m-%d %H:%M UTC')|g" \
+            -e "s|%%RUN_ID%%|$GITHUB_RUN_ID|g" \
+            -e "s|%%RUN_URL%%|$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID|g" \
+            "$TEMPLATE_DIR/hintro.html" > "$RUNNER_TEMP/hintro.html"
+
+    - name: Render index pages
+      shell: bash
+      working-directory: ${{ github.workspace }}/${{ github.ref_name }}
+      env:
+        TEMPLATE_DIR: ${{ github.workspace }}/.github/openwrt-repo
+      run: |
+        set -euo pipefail
+        shopt -s nullglob
+
+        # tree renders the file listing; the templates wrap it in the page chrome.
+        # -H "" keeps every link relative to the page's own directory: tree
+        # concatenates the baseHREF with a path that already starts with "./",
+        # so -H "." would prefix every link with "../" instead.
+        render_index() {
+          tree -H "" -h --noreport -I "index.html" --charset utf-8 -L 1 \
+            --hintro "$RUNNER_TEMP/hintro.html" \
+            --houtro "$TEMPLATE_DIR/houtro.html" \
+            -o index.html
+        }
+
+        # Render top-level index page for current release
+        render_index
+
+        # Render index pages for each architecture subdirectory.
+        for arch_dir in */; do
+          ( cd "$arch_dir" && render_index )
+        done
