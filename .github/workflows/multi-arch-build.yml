@@ -108,7 +108,7 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Build APK packages ${{ matrix.arch }}
-        if: ${{ github.ref_name == 'main' || github.ref_name == 'openwrt-25.12' }}
+        if: github.ref_name == 'main' || github.ref_name == 'openwrt-25.12'
         uses: openwrt/gh-action-sdk@v11
         env:
           ARCH: "${{ matrix.arch }}-${{ github.ref_name }}"
@@ -117,7 +117,7 @@ jobs:
           INDEX: 1
 
       - name: Build IPK packages ${{ matrix.arch }}
-        if: ${{ github.ref_name == 'openwrt-24.10' || github.ref_name == 'openwrt-22.03' }}
+        if: github.ref_name == 'openwrt-24.10' || github.ref_name == 'openwrt-22.03'
         uses: openwrt/gh-action-sdk@v11
         env:
           ARCH: "${{ matrix.arch }}-${{ github.ref_name }}"
@@ -126,7 +126,7 @@ jobs:
           INDEX: 1
 
       - name: Build IPK packages (23.05) ${{ matrix.arch }}
-        if: ${{ github.ref_name == 'openwrt-23.05' }}
+        if: github.ref_name == 'openwrt-23.05'
         uses: openwrt/gh-action-sdk@v11
         env:
           # Override ARCH to use the last supported release, 23.05.6
@@ -148,7 +148,15 @@ jobs:
     concurrency:
       # Only run one deploy at a time
       group: publish-builds
+    env:
+      r2_bucket: meshtastic-openwrt-repo
     steps:
+      # Only the repo homepage is needed for the deployment.
+      - name: Fetch openwrt-repo metadata
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: .github/openwrt-repo
+
       - name: Download artifacts
         uses: actions/download-artifact@v8
         with:
@@ -164,3 +172,42 @@ jobs:
           user_name: github-actions[bot]
           user_email: github-actions[bot]@users.noreply.github.com
           enable_jekyll: true
+
+      # - name: Render README.md to index.html
+      #   if: github.ref_name == 'main'
+      #   run: >
+      #     pandoc .github/openwrt-repo/README.md -t html5
+      #     -o ${{ github.ref_name }}/index.html
+
+      - name: Upload packages to Cloudflare R2
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          # R2 is single-region; the S3 API still requires a region to be set.
+          AWS_DEFAULT_REGION: auto
+          # Cloudflare's documented aws-cli settings for R2. Left at the AWS
+          # default, CLI >= 2.23 attaches CRC32 request checksums that R2 can
+          # reject, so both of these must stay at when_required.
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
+          R2_ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+        run: |
+          set -euo pipefail
+          aws --version
+          r2_sync() {
+            aws s3 sync "./${{ github.ref_name }}" "s3://${r2_bucket}/${{ github.ref_name }}/" \
+              --endpoint-url "$R2_ENDPOINT" \
+              --no-progress \
+              --delete \
+              --metadata "commit=${{ github.sha }},run=${{ github.run_id }}" \
+              "$@"
+          }
+          # Packages carry their version in the filename, so cache them for
+          # 1 week in browser, and 1 month on the CDN.
+          # Uploaded first, so the indexes never point at a missing file.
+          r2_sync --cache-control 'public, max-age=604800, s-maxage=2592000' \
+            --exclude '*' --include '*.apk' --include '*.ipk'
+          # Indexes (Packages*, index.json, packages.adb) are rewritten by every
+          # build, so cache them for 1 day in browser and on the CDN.
+          r2_sync --cache-control 'public, max-age=86400, s-maxage=86400' \
+            --exclude '*.apk' --exclude '*.ipk'
