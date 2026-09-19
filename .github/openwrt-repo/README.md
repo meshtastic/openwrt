@@ -67,3 +67,13 @@ echo "https://openwrt.meshtastic.org/main/$(cat /etc/apk/arch)/packages.adb" > /
 wget https://openwrt.meshtastic.org/meshtastic-apk.pem -O /etc/apk/keys/meshtastic-apk.pem
 apk update
 ```
+
+---
+
+## Browse Repositories
+
+- [SNAPSHOT](main)
+- [25.12](openwrt-25.12)
+- [24.10](openwrt-24.10)
+- [23.05](openwrt-23.05)
+- [22.03](openwrt-22.03)

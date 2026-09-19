@@ -1,0 +1,72 @@
+name: Generate R2 Homepage
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/openwrt-repo/README.md
+      - .github/openwrt-repo/*.css
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generate-homepage:
+    runs-on: ubuntu-26.04
+    concurrency:
+      # Only run one deploy at a time
+      group: publish-r2-homepage
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: |
+            .github/openwrt-repo
+
+      - name: Install pandoc
+        uses: pandoc/actions/setup@v1
+
+      # The homepage and the package indexes share style.css, so pandoc's own
+      # stylesheet is switched off (document-css) and ours is linked instead.
+      # pagetitle sets <title> without pandoc adding a title block above the
+      # README's own heading.
+      - name: Generate homepage
+        working-directory: .github/openwrt-repo
+        run: >
+          pandoc README.md
+          -t html5
+          --standalone
+          --syntax-highlighting=none
+          --metadata pagetitle="Meshtastic OpenWrt Repo"
+          --css /style.css
+          -o index.html
+
+      - name: Upload packages to Cloudflare R2
+        env:
+          r2_bucket: meshtastic-openwrt-repo
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          # R2 is single-region; the S3 API still requires a region to be set.
+          AWS_DEFAULT_REGION: auto
+          # Cloudflare's documented aws-cli settings for R2. Left at the AWS
+          # default, CLI >= 2.23 attaches CRC32 request checksums that R2 can
+          # reject, so both of these must stay at when_required.
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
+          R2_ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+        working-directory: .github/openwrt-repo
+        run: |
+          set -euo pipefail
+          aws --version
+          r2_sync() {
+            aws s3 sync "./" "s3://${r2_bucket}/" \
+              --endpoint-url "$R2_ENDPOINT" \
+              --no-progress \
+              --metadata "commit=${{ github.sha }},run=${{ github.run_id }}" \
+              "$@"
+          }
+          # Homepage doesn't change often, cache for 1 day in browser and 1 week on the CDN.
+          r2_sync --cache-control 'public, max-age=86400, s-maxage=604800' \
+            --exclude 'hintro.html' --exclude 'houtro.html' --exclude 'README.md'
