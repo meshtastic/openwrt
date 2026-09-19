@@ -115,6 +115,8 @@ jobs:
           FEEDNAME: meshtastic
           PRIVATE_KEY: "${{ secrets.WRT_APK_KEY }}"
           INDEX: 1
+          # Enable verbose output when debug mode is active
+          V: ${{ runner.debug == '1' && 's' || '' }}
 
       - name: Build IPK packages ${{ matrix.arch }}
         if: github.ref_name == 'openwrt-24.10' || github.ref_name == 'openwrt-23.05' || github.ref_name == 'openwrt-22.03'
@@ -125,6 +127,8 @@ jobs:
           FEEDNAME: meshtastic
           KEY_BUILD: "${{ secrets.WRT_IPK_KEY }}"
           INDEX: 1
+          # Enable verbose output when debug mode is active
+          V: ${{ runner.debug == '1' && 's' || '' }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
