@@ -19,6 +19,7 @@ This repository is hosted on [Cloudflare R2](https://developers.cloudflare.com/r
 Used in the latest stable OpenWrt versions.
 
 Supported versions:
+
 - `25.12`
 
 ##### Add APK repository to your OpenWrt device
@@ -36,6 +37,7 @@ apk update
 Used in old-stable versions of OpenWrt.
 
 Supported versions:
+
 - `24.10`
 - `23.05`
 - `22.03`
