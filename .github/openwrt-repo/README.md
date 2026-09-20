@@ -72,8 +72,8 @@ apk update
 
 ## Browse Repositories
 
-- [SNAPSHOT](main)
-- [25.12](openwrt-25.12)
-- [24.10](openwrt-24.10)
-- [23.05](openwrt-23.05)
-- [22.03](openwrt-22.03)
+- [SNAPSHOT](main/)
+- [25.12](openwrt-25.12/)
+- [24.10](openwrt-24.10/)
+- [23.05](openwrt-23.05/)
+- [22.03](openwrt-22.03/)
