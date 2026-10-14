@@ -3,19 +3,19 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=meshtasticd
-PKG_VERSION:=2.7.26
-PKG_SOURCE_VERSION:=v$(PKG_VERSION).54e0d8d
+PKG_VERSION:=2.8.2
+PKG_SOURCE_VERSION:=f7f66b4731d182bc18ce11e542c6e7632e853310
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/meshtastic/firmware.git
-PKG_MIRROR_HASH:=dc1d9843514b92590eaac0a329208b699e330522688215cfc8441c8945de4782
+PKG_MIRROR_HASH:=6353fc4d633bdec38b1cd416dede419f1fa080771ca38724b5b6dd91d0121f67
 
-FRONTEND_VERSION:=2.6.7
+FRONTEND_VERSION:=2.7.2
 FRONTEND_DEST:=$(PKG_NAME)-frontend-$(FRONTEND_VERSION).tar
 FRONTEND_URL:=https://github.com/meshtastic/web/releases/download/v$(FRONTEND_VERSION)/
-FRONTEND_HASH:=a34f4360a0486543a698de20de533557492e763ab459fc27fcea95d0495144ed
+FRONTEND_HASH:=62657b85b4c24af4d44da2932b64143abdbf6e65a79fcb51fd0801d9540616e2
 
 PKG_BUILD_DEPENDS:= \
 	python3/host \
@@ -39,12 +39,12 @@ define Package/meshtasticd/Default
   URL:=https://github.com/meshtastic/firmware
 endef
 
-# Leaving a possibility for adding a light variant without the web UI support if
-# it's made configurable upstream. Currently headers are autodetected so it's
-# not possible to add it.
+# Leaving a possibility for adding a light variant without the web UI / avahi
+# support if it's made configurable upstream. Currently headers are autodetected
+# so it's not possible to add it.
 define Package/meshtasticd-full
   $(call Package/meshtasticd/Default)
-  TITLE+= (with web UI support)
+  TITLE+= (with web UI + avahi support)
   DEPENDS:= \
     +bluez-libs \
     +kmod-spi-dev \
@@ -58,16 +58,21 @@ define Package/meshtasticd-full
     +libyaml-cpp \
     +libyder \
     +zlib \
+    +jsoncpp \
+    +libavahi-client \
     $(INTL_DEPENDS)
   PROVIDES:=meshtasticd
 endef
 
+# Transitional. meshtasticd announces itself over mDNS directly as of 2.8.x
+# (NativeDiscovery.cpp, via libavahi-client), so the static service file is
+# now a duplicate announcement. This package ships nothing and exists only to
+# retire that file on systems that installed the old one. Drop it after the
+# next release branch.
 define Package/meshtasticd-avahi-service
   $(call Package/meshtasticd/Default)
-  TITLE+= (avahi service)
-  DEPENDS:= \
-    +avahi-daemon \
-    +meshtasticd
+  TITLE+= (avahi service, transitional)
+  DEPENDS:=+meshtasticd
 endef
 
 define Package/meshtasticd-web
@@ -83,7 +88,8 @@ define Package/meshtasticd-full/description
 endef
 
 define Package/meshtasticd-avahi-service/description
-  Service definition for announcing the Meshtastic daemon via mDNS
+  Transitional empty package. meshtasticd now announces itself via mDNS
+  directly; this package is safe to remove.
 endef
 
 define Package/meshtasticd-web/description
@@ -170,8 +176,16 @@ define Package/meshtasticd-full/install
 endef
 
 define Package/meshtasticd-avahi-service/install
-	$(INSTALL_DIR) $(1)/etc/avahi/services
-	$(INSTALL_CONF) ./files/meshtasticd.service $(1)/etc/avahi/services/
+	:
+endef
+
+# Remove the static Avahi service file
+define Package/meshtasticd-avahi-service/postinst
+#!/bin/sh
+if [ -z "$${IPKG_INSTROOT}" ]; then
+	rm -f /etc/avahi/services/meshtasticd.service
+fi
+exit 0
 endef
 
 define Package/meshtasticd-web/install
@@ -186,10 +200,6 @@ define Package/meshtasticd-full/conffiles
 /etc/meshtasticd/config.d/
 /etc/meshtasticd/config.yaml
 /etc/meshtasticd/ssl
-endef
-
-define Package/meshtasticd-avahi-service/conffiles
-/etc/avahi/services/meshtasticd.service
 endef
 
 $(eval $(call Download,meshtasticd-web))
